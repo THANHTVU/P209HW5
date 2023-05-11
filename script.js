@@ -5,12 +5,11 @@ function MyObject(name, age, email) {
   this.email = email;
 }
 
-// function to handle form submission
-function saveData() {
-  // get form values
-  var name = document.getElementById("name").value;
-  var age = document.getElementById("age").value;
-  var email = document.getElementById("email").value;
+// Page 1: Data Entry
+$("#page1-save-button").on("click", function () {
+  var name = $("#name").val();
+  var age = $("#age").val();
+  var email = $("#email").val();
 
   // create new object
   var myObject = new MyObject(name, age, email);
@@ -23,22 +22,18 @@ function saveData() {
 
   // store the array in local storage
   localStorage.setItem("myObjects", JSON.stringify(myObjects));
+  $("#name").val("");
+  $("#age").val("");
+  $("#email").val("");
+  alert("Data saved successfully!");
+  $.mobile.changePage("#displaydata");
+});
 
-  // clear form values
-  document.getElementById("name").value = "";
-  document.getElementById("age").value = "";
-  document.getElementById("email").value = "";
-
-  // redirect to display page
-  window.location.href = "displaypage.html";
-}
-
-// function to display objects in table
-function displayObjects() {
-  var table = document.getElementById("table-body");
-
+$(document).on("pagebeforeshow", "#displaydata", function () {
+  // Page 2: Display Data
   // get array from local storage
   myObjects = JSON.parse(localStorage.getItem("myObjects"));
+  console.log(myObjects);
 
   // check if array is null
   if (myObjects === null) {
@@ -47,22 +42,14 @@ function displayObjects() {
 
   // loop through objects in array
   for (var i = 0; i < myObjects.length; i++) {
-    // create new row
-    var row = table.insertRow();
-
-    // insert cells with object data
-    var nameCell = row.insertCell(0);
-    nameCell.innerHTML = myObjects[i].name;
-
-    var ageCell = row.insertCell(1);
-    ageCell.innerHTML = myObjects[i].age;
-
-    var emailCell = row.insertCell(2);
-    emailCell.innerHTML = myObjects[i].email;
+    $("#table-body").append(
+      "<tr><td>" +
+        myObjects[i].name +
+        "</td><td>" +
+        myObjects[i].age +
+        "</td><td>" +
+        myObjects[i].email +
+        "</td></tr>"
+    );
   }
-}
-
-// call displayObjects function on load of display page
-if (window.location.href.includes("displaypage.html")) {
-  displayObjects();
-}
+});
